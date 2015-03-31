@@ -6,16 +6,13 @@
             [prone.middleware :refer [wrap-exceptions]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [ring.adapter.jetty :as jetty]
+            [oxford-web-app.views.layout :as layout]
+            [oxford-web-app.views.contents :as contents]
             [environ.core :refer [env]]))
 
-(defn splash []
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body "Oxford-Web-App.Handler version 0.0.1"})
-
 (defroutes routes
-  (GET "/" []
-       (splash))
+  (GET "/" [] (layout/application "Home" (contents/index)) )
+  (GET "/add" [] (layout/application "Check article" (contents/article-form)) )
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
