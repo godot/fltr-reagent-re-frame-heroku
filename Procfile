@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -cp target/clojure-getting-started-standalone.jar clojure.main -m clojure-getting-started.web
+web: java $JVM_OPTS -cp target/oxford-web-app-standalone.jar clojure.main -m oxford-web-app.handler
