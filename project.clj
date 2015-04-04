@@ -11,6 +11,7 @@
                  [prone "0.8.0"]
                  [hiccup "1.0.5"]
                  [stemmers "0.2.2"]
+                 [clojure-opennlp "0.3.3"]
                  [environ "0.5.0"]]
   :min-lein-version "2.0.0"
   :plugins [

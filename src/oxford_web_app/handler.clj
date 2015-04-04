@@ -12,7 +12,7 @@
             [environ.core :refer [env]]))
 
 (defn convert [text]
-  {:text text :stemm (utils/analyze text) })
+  {:text text :dict utils/words-list :stemm (utils/analyze text) })
 
 (defroutes routes
   (GET "/" [] (layout/application "Home" (contents/index)) )

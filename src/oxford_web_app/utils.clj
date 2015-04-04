@@ -1,18 +1,25 @@
 (ns oxford-web-app.utils)
 (require 'clojure.string)
 (require '(stemmers core soundex porter))
+(require '[clojure.string :as str])
 
-(def oxford-dict ["width" "with" "were" "session" "documentation" "was" "less" "test"])
+(def s (slurp "oxford.dic.txt"))
 
-(def my-text "Initially most of the testing van Houtum did was scripted testing for the new regression test. They choose to script the regression test to be able to do the tests more often in the same way and ultimately, to automate them. Using situational testing the test team used other tactics for different purposes. Functionality known to be buggy and layout flaws were tested through bug hunts, because documentation was less important and finding as many existing flaws as possible in a short time span was the goal. User acceptance tests were done with session based testing. By starting with the scripted testforms and moving towards the more exploratory testing activities, van Houtum saw that the agility of the scrum team wasn’t optimized however.")
+(defstruct word-struct :url :word :type)
+
+(def words-list (map #(apply struct word-struct (str/split % #"\t")) (str/split s #"\n")))
+(def word-dict (apply hash-map (mapcat #(conj [] (:word %) %) words-list)))
 
 (defn in?
   "true if seq contains elm"
   [seq elm]
   (some #(= elm %) seq))
 
-;;(defn oxford-dict-word? [word] (some #{word} oxford-dict))
-(defn oxford-dict-word? [word] (in? oxford-dict word))
+;;(defn oxford-dict-word? [word] (contains word-dict word))
+(defn oxford-dict-word?  [w]
+  (or
+   (contains? word-dict w)
+   (contains? word-dict (first (stemmers.core/stems w)))))
 
 (oxford-dict-word? "test")
 (oxford-dict-word? "tests")
@@ -20,7 +27,8 @@
 
 (defstruct word :orig :stemm :oxford?)
 
-(defn analyze [text] (map #(struct word % (stemmers.core/stems (str %)) (oxford-dict-word? %)) (filter not-empty (clojure.string/split text #"[ ,.]"))))
+(defn analyze [text]
+  (map #(struct word % (stemmers.core/stems (str %)) (oxford-dict-word? %)) (filter not-empty (clojure.string/split text #"[ ,.]"))))
 
 (analyze "lorem ipsum ide die died")
 

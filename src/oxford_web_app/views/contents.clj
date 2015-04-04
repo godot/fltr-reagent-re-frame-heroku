@@ -6,6 +6,23 @@
   [:div {:id "content"}
    [:h1 {:class "text-success"} "Hello Hiccup"]])
 
+(defn oxford [dict]
+           [:div
+            [:h1 {:class "text-info"} "Oxford dictionary"]
+            [:table {:class "table table.bordered table.hovered"}
+             [:thead
+              [:tr
+               [:th "word"]
+               [:th "type"]
+               [:th "url"]]]
+             (for [w dict]
+               (let [{:keys [word url type]} w]
+                 [:tr
+                  [:td word ]
+                  [:td type ]
+                  [:td (link-to url "oxford") ]]
+                 ))]])
+
 (defn summary [text]
            [:div
             [:h1 {:class "text-info"} "Oxford dictionary"]
@@ -18,7 +35,7 @@
                [:th "oxford"]]]
              (for [word (:stemm text)]
                (let [{:keys [orig stemm oxford?]} word]
-                 [:tr
+                 [:tr {:class (if oxford? "success" "danger")}
                   [:td orig ]
                   [:td stemm ]
                   [:td oxford? ]]
