@@ -6,11 +6,19 @@
          [:head
           [:title title]
           (include-css "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
-          (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js")
-          (include-js "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
-          (include-js "js/script.js")
 
           [:body
-           [:div {:class "container"}
+           [:div {:class "container" :id "root"}
             [:h1 "oxford-web-app.views.layout" ]
-            content ]]]))
+            content ]
+
+
+          (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js")
+          (include-js "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
+          (include-js "js/main.js")
+           [:script
+            "console.log('start script')"
+            (when false "oxford_web_app.core.start()")
+            ]
+
+           ]]))

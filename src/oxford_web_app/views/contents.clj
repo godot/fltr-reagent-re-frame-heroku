@@ -35,10 +35,11 @@
                [:th "oxford"]]]
              (for [word (:stemm text)]
                (let [{:keys [orig stemm oxford?]} word]
-                 [:tr {:class (if oxford? "success" "danger")}
-                  [:td orig ]
-                  [:td stemm ]
-                  [:td oxford? ]]
+                 (if (not  oxford?)
+                   [:tr {:class (if oxford? "success" "danger")}
+                    [:td orig ]
+                    [:td stemm ]
+                    [:td oxford? ]])
                  ))]])
 
 (defn article-form []

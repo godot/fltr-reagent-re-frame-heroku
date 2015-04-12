@@ -5,26 +5,51 @@
             [clojure.java.io :as io]
             [prone.middleware :refer [wrap-exceptions]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [ring.middleware.json :as middleware]
             [ring.adapter.jetty :as jetty]
             [oxford-web-app.views.layout :as layout]
             [oxford-web-app.views.contents :as contents]
             [oxford-web-app.utils :as utils]
+            [cheshire.core :refer :all]
             [environ.core :refer [env]]))
 
-(defn convert [text]
-  {:text text :dict utils/words-list :stemm (utils/analyze text) })
+(defn analyze-text [text]
+  {:text text :dict utils/word-list :stemm (utils/analyze text) })
+
+(defn json-response [data & [status]]
+  {:status (or status 200)
+   :headers {"Content-Type" "application/json"}
+   :body (encode data)})
 
 (defroutes routes
-  (GET "/" [] (layout/application "Home" (contents/index)) )
+  (GET "/" [] (layout/application "Add article" (contents/article-form)) )
   (GET "/add" [] (layout/application "Add article" (contents/article-form)) )
-  (GET "/check"  {{text :body} :params}  (layout/application "Check article" (contents/summary (convert text))))
+  (GET "/check"  {{text :body} :params}  (layout/application "Check article" (contents/summary (analyze-text text))))
+
+  ;;JSON
+  (GET "/api/dictionary" [] (json-response (take 100 utils/word-list)))
+  (GET "/api/dictionary/:word" [word] (json-response (or (get utils/dictionary word) {:result "missing"} )))
+  (POST "/api/check" request (let [
+                              source-text (get-in request [:body :body])
+                              analyzed-response (select-keys (analyze-text source-text) [:text :stemm])]
+                          (json-response analyzed-response)))
+
+  (route/resources "/")
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
+(def my-site-defaults
+  (wrap-defaults routes
+                 (-> site-defaults
+                     (assoc-in [:security :anti-forgery] false))))
 
 (def app
-  (let [handler (wrap-defaults routes site-defaults)]
-    (if (env :dev?) (wrap-exceptions handler) handler)))
+  (let [handler my-site-defaults]
+    (-> (if (env :dev?) (wrap-exceptions handler) handler)
+        (middleware/wrap-json-body {:keywords? true})
+        middleware/wrap-json-response
+     )))
+
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]

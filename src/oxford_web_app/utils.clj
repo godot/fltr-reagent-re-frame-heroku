@@ -3,27 +3,29 @@
 (require '(stemmers core soundex porter))
 (require '[clojure.string :as str])
 
-(def s (slurp "oxford.dic.txt"))
+(defn log [message x] (println message) x)
+
+(def s (log "loading dict from file" (slurp "oxford.dic.txt")))
 
 (defstruct word-struct :url :word :type)
 
-(def words-list (map #(apply struct word-struct (str/split % #"\t")) (str/split s #"\n")))
-(def word-dict (apply hash-map (mapcat #(conj [] (:word %) %) words-list)))
+(def word-list (map #(apply struct word-struct (str/split % #";")) (str/split s #"\n")))
+
+(def dictionary (apply hash-map (mapcat #(conj [] (:word %) %) word-list)))
 
 (defn in?
   "true if seq contains elm"
   [seq elm]
   (some #(= elm %) seq))
 
-;;(defn oxford-dict-word? [word] (contains word-dict word))
-(defn oxford-dict-word?  [w]
-  (or
-   (contains? word-dict w)
-   (contains? word-dict (first (stemmers.core/stems w)))))
+(defn oxford-dict-word?  [word]
+  (let [w (str/trim (str/lower-case word))] (or
+           (contains? dictionary word)
+           (contains? dictionary w)
+           (contains? dictionary (first (stemmers.core/stems w))))))
 
-(oxford-dict-word? "test")
-(oxford-dict-word? "tests")
-(oxford-dict-word? "died")
+(def mandatory-words ["o'clock" "are" "be" "ugly" "test" "tests" "died" "So" "cheap" "is" "was" "o'clock" "didn't" "doesn't" "isn't" "aren't" "wasn't" "weren't" "don't" "been" "I" "cheaper" "pretty" "better" "best" "badder" "on" "On"])
+
 
 (defstruct word :orig :stemm :oxford?)
 
@@ -34,3 +36,5 @@
 
 ;; ;; defaults to porter stemmer
 (stemmers.core/stems "what died for stemming dying")
+
+(or (not-empty (remove oxford-dict-word? mandatory-words)) "Works just fine!")
