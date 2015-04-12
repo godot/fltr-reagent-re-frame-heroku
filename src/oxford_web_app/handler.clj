@@ -14,7 +14,12 @@
             [environ.core :refer [env]]))
 
 (defn analyze-text [text]
-  {:text text :dict utils/word-list :stemm (utils/analyze text) })
+  {
+   :text text
+   :dict utils/word-list
+   :stemm (utils/analyze text)
+   :highlighted (utils/highligh text)
+   })
 
 (defn json-response [data & [status]]
   {:status (or status 200)

@@ -27,6 +27,7 @@
            [:div
             [:h1 {:class "text-info"} "Oxford dictionary"]
             [:div {:class "well"}(:text text)]
+            [:div {:class "well"}(:highlighted text)]
             [:table {:class "table table.bordered table.hovered"}
              [:thead
               [:tr
@@ -35,11 +36,10 @@
                [:th "oxford"]]]
              (for [word (:stemm text)]
                (let [{:keys [orig stemm oxford?]} word]
-                 (if (not  oxford?)
-                   [:tr {:class (if oxford? "success" "danger")}
-                    [:td orig ]
-                    [:td stemm ]
-                    [:td oxford? ]])
+                 [:tr {:class (if oxford? "success" "danger")}
+                  [:td orig ]
+                  [:td stemm ]
+                  [:td oxford? ]]
                  ))]])
 
 (defn article-form []

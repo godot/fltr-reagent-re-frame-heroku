@@ -2,7 +2,15 @@
 (require 'clojure.string)
 (require '(stemmers core soundex porter))
 (require '[clojure.string :as str])
+(require '[opennlp.nlp :as nlp])
+(require 'opennlp.treebank)
 
+;;npl
+(def get-sentences (nlp/make-sentence-detector "models/en-sent.bin"));
+(def tokenize (nlp/make-tokenizer "models/en-token.bin"))
+(def detokenize (nlp/make-detokenizer "models/english-detokenizer.xml"))
+
+;;analyze
 (defn log [message x] (println message) x)
 
 (def s (log "loading dict from file" (slurp "oxford.dic.txt")))
@@ -30,7 +38,14 @@
 (defstruct word :orig :stemm :oxford?)
 
 (defn analyze [text]
-  (map #(struct word % (stemmers.core/stems (str %)) (oxford-dict-word? %)) (filter not-empty (clojure.string/split text #"[ ,.]"))))
+  (map #(struct word % (stemmers.core/stems (str %)) (oxford-dict-word? %))
+       (filter not-empty (tokenize text))))
+
+(defn mark-non-oxford-word [word] (if (or (re-find #"[?!,.]" word) (oxford-dict-word? word)) word (str "<mark>" word "</mark>")))
+
+(defn highligh [text]
+  (detokenize (map mark-non-oxford-word (tokenize text)))
+  )
 
 (analyze "lorem ipsum ide die died")
 
@@ -38,3 +53,5 @@
 (stemmers.core/stems "what died for stemming dying")
 
 (or (not-empty (remove oxford-dict-word? mandatory-words)) "Works just fine!")
+
+(highligh "Dot. This is test of some hyper oswald functionalities! Don't mess with me and don't mess with them. There aren't funny!")
