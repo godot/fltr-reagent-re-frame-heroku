@@ -2354,6 +2354,8 @@ http://www.oxfordlearnersdictionaries.com/definition/english/nothing;nothing;pro
 http://www.oxfordlearnersdictionaries.com/definition/english/note-down;note down;
 http://www.oxfordlearnersdictionaries.com/definition/english/note_1;note;noun
 http://www.oxfordlearnersdictionaries.com/definition/english/note_1;notes;noun
+http://www.oxfordlearnersdictionaries.com/definition/english/not;n't;adverb
+http://www.oxfordlearnersdictionaries.com/definition/english/not;n’t;adverb
 http://www.oxfordlearnersdictionaries.com/definition/english/not;not;adverb
 http://www.oxfordlearnersdictionaries.com/definition/english/nose_1;nose;noun
 http://www.oxfordlearnersdictionaries.com/definition/english/nose_1;noses;noun
@@ -2715,14 +2717,12 @@ http://www.oxfordlearnersdictionaries.com/definition/english/beach_1;beach;noun
 http://www.oxfordlearnersdictionaries.com/definition/english/beach_1;beachs;noun
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;be;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;are;verb
-http://www.oxfordlearnersdictionaries.com/definition/english/be_1;aren't;verb
+http://www.oxfordlearnersdictionaries.com/definition/english/be_1;'re;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;am;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;is;verb
-http://www.oxfordlearnersdictionaries.com/definition/english/be_1;isn't;verb
+http://www.oxfordlearnersdictionaries.com/definition/english/be_1;'s;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;was;verb
-http://www.oxfordlearnersdictionaries.com/definition/english/be_1;wasn't;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;were;verb
-http://www.oxfordlearnersdictionaries.com/definition/english/be_1;weren't;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;been;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/be_1;being;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/bay_1;bay;noun
@@ -7342,10 +7342,7 @@ http://www.oxfordlearnersdictionaries.com/definition/english/document_1;document
 http://www.oxfordlearnersdictionaries.com/definition/english/doctor_1;doctor;noun
 http://www.oxfordlearnersdictionaries.com/definition/english/doctor_1;doctors;noun
 http://www.oxfordlearnersdictionaries.com/definition/english/do1_1;do;verb
-http://www.oxfordlearnersdictionaries.com/definition/english/do1_1;don't;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/do1_1;does;verb
-http://www.oxfordlearnersdictionaries.com/definition/english/do1_1;doesn't;verb
-http://www.oxfordlearnersdictionaries.com/definition/english/do1_1;didn't;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/do1_1;did;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/do1_1;doing;verb
 http://www.oxfordlearnersdictionaries.com/definition/english/divorced;divorced;adjective

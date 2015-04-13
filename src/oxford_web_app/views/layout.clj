@@ -6,7 +6,7 @@
          [:head
           [:title title]
           (include-css "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
-
+          (include-css "css/style.css")
           [:body
            [:div {:class "container" :id "root"}
             [:h1 "oxford-web-app.views.layout" ]
