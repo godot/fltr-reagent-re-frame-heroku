@@ -12,13 +12,13 @@
             [:h1 "oxford-web-app.views.layout" ]
             content ]
 
-
-          (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js")
-          (include-js "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
-          (include-js "js/main.js")
+           (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js")
+           (include-js "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
+           (include-js "js/out/goog/base.js")
+           (include-js "js/app.js")
            [:script
-            "console.log('start script')"
-            (when false "oxford_web_app.core.start()")
+            "console.log('start script');"
+            "goog.require('oxford_web_app.core');"
             ]
 
            ]]))

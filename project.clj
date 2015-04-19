@@ -5,7 +5,6 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-3058" :scope "provided"]
-                 [figwheel "0.2.5"]
                  [cljsjs/react "0.13.1-0"]
                  [compojure "1.1.8"]
                  [ring/ring-core "1.3.2"]
@@ -17,61 +16,68 @@
                  [stemmers "0.2.2"]
                  [clojure-opennlp "0.3.3"]
                  [reagent "0.5.0"]
+                 [reagent-forms "0.5.0"]
                  [cheshire "5.4.0"]
+                 ;; [cljs-ajax "0.3.11"]
                  [environ "0.5.0"]]
   :min-lein-version "2.0.0"
   :plugins [
             [lein-ring "0.9.3"]
-            [environ/environ.lein "0.2.1"]
-            [lein-figwheel "0.2.5"]
             [lein-cljsbuild "1.0.5"]
+            [environ/environ.lein "0.2.1"]
             ]
+  :source-paths ["src-cljs" "src"]
 
   :cljsbuild {
-              :builds [ { :id "example"
-                         :source-paths ["src/"]
-                         :compiler { :output-to "resources/public/js/compiled/example.js"
-                                    :output-dir "resources/public/js/compiled/out"
-                                    ;;:externs ["resources/public/js/externs/jquery-1.9.js"]
-                                    :optimizations :none
-                                    :source-map true } } ]
+              :builds {
+                       :client {
+                                :source-paths ["src-cljs"]
+                                :compiler {
+                                           :output-to "resources/public/js/app.js"
+                                           :output-dir "resources/public/js/out"
+                                           :asset-path   "js/out" }}}
               }
+  :profiles
+  { :dev
+   {
+    :dependencies [
+                   [figwheel "0.2.5"]
+                   ]
+    :plugins [
+              [lein-figwheel "0.2.5"]]
+    :cljsbuild
+    { :builds
+     { :client
+      { :compiler
+       {
+        :optimizations :none
+        :source-map true}}}}
+    :figwheel
+    {
+     :http-server-root "public" ;; this will be in resources/
+     :server-port 3449          ;; default
+     :css-dirs ["resources/public/css"]
+     :ring-handler oxford-web-app.handler/app
+     :open-file-command "emacs"}}
+   :production
+   { :env
+    { :production true }
+    :cljsbuild
+    { :builds
+     { :client
+      { :compiler
+       {
+        :optimizations :advanced
+        :pretty-print false
+        :source-map false}}}
+     }}}
+  :aliases {"package"
+            ["with-profile" "production" "do"
+             "clean" ["cljsbuild" "once"]]}
 
-  :figwheel {
-             :http-server-root "public" ;; this will be in resources/
-             :server-port 3449          ;; default
-
-             ;; CSS reloading (optional)
-             ;; :css-dirs has no default value
-             ;; if :css-dirs is set figwheel will detect css file changes and
-             ;; send them to the browser
-             :css-dirs ["resources/public/css"]
-
-             ;; Server Ring Handler (optional)
-             ;; if you want to embed a ring handler into the figwheel http-kit
-             ;; server
-             :ring-handler oxford-web-app.handler/app
-
-             ;; To be able to open files in your editor from the heads up display
-             ;; you will need to put a script on your path.
-             ;; that script will have to take a file path and a line number
-             ;; ie. in  ~/bin/myfile-opener
-             ;; #! /bin/sh
-             ;; emacsclient -n +$2 $1
-             ;;
-             :open-file-command "myfile-opener"
-
-             ;; if you want to disable the REPL
-             ;; :repl false
-
-             ;; to configure a different figwheel logfile path
-             ;; :server-logfile "tmp/logs/figwheel-logfile.log"
-
-             }
 
   :ring {:handler oxford-web-app.handler/app}
   :hooks [environ.leiningen.hooks]
   :uberjar-name "oxford-web-app-standalone.jar"
-  :profiles {
-             :production {:env {:production true}}
-             })
+
+  )

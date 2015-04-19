@@ -9,3 +9,5 @@ pom.xml
 /target
 /.lein-repl-history
 /.nrepl-port
+/resources/public/js/
+/resources/public/js/main.js

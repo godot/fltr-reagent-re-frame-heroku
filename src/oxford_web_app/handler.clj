@@ -35,8 +35,8 @@
   (GET "/api/dictionary" [] (json-response (take 100 utils/word-list)))
   (GET "/api/dictionary/:word" [word] (json-response (or (get utils/dictionary word) {:result "missing"} )))
   (POST "/api/check" request (let [
-                              source-text (get-in request [:body :body])
-                              analyzed-response (select-keys (analyze-text source-text) [:text :stemm])]
+                                   source-text (get-in request [:body :body])
+                                   analyzed-response (select-keys (analyze-text source-text) [:text :highlighted])]
                           (json-response analyzed-response)))
 
   (route/resources "/")
