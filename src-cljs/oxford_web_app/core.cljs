@@ -122,5 +122,4 @@
 ;;   ;; it can be helpful to specify a build id for
 ;;   ;; the client to focus on
 ;;   ;; :build-id "example"
-;;            }
-)
+;; })
