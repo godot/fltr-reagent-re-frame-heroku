@@ -28,15 +28,13 @@
             ]
   :source-paths ["src-cljs" "src"]
 
-  :cljsbuild {
-              :builds {
-                       :client {
-                                :source-paths ["src-cljs"]
-                                :compiler {
-                                           :output-to "resources/public/js/app.js"
-                                           :output-dir "resources/public/js/out"
-                                           :asset-path   "js/out" }}}
-              }
+  :cljsbuild
+  { :builds { :client
+             { :source-paths ["src-cljs"]
+              :compiler {
+                         :output-to "resources/public/js/app.js"
+                         :output-dir "resources/public/js/out"
+                         :asset-path   "js/out" }}}}
   :profiles
   { :dev
    {
@@ -72,7 +70,7 @@
      }}}
   :aliases {"package"
             ["with-profile" "production" "do"
-             "clean" ["cljsbuild" "once"]]}
+             "clean" ["uberjar"] ["cljsbuild" "once"]]}
 
 
   :ring {:handler oxford-web-app.handler/app}
