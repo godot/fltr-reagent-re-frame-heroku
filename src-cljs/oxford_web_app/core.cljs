@@ -123,3 +123,5 @@
 ;;   ;; the client to focus on
 ;;   ;; :build-id "example"
 ;; })
+
+(start)
