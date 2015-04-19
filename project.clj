@@ -68,8 +68,7 @@
       { :compiler
        {
         :optimizations :advanced
-        :pretty-print false
-        :source-map false}}}
+        :pretty-print false}}}
      }}}
   :aliases {"package"
             ["with-profile" "production" "do"
