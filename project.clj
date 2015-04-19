@@ -70,7 +70,7 @@
      }}}
   :aliases {"package"
             ["with-profile" "production" "do"
-             "clean" ["uberjar"] ["cljsbuild" "once"]]}
+             "clean" ["cljsbuild" "once"]  ["uberjar"] ]}
 
 
   :ring {:handler oxford-web-app.handler/app}
