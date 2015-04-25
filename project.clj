@@ -31,7 +31,7 @@
 
   :cljsbuild
   { :builds { :client
-             { :source-paths ["src-cljs"]
+             { :source-paths ["src-cljs/app"]
               :compiler {
                          :output-to "resources/public/js/app.js"
                          :output-dir "resources/public/js/out"
@@ -40,17 +40,19 @@
   { :dev
    {
     :dependencies [
-                   [figwheel "0.2.5"]
-                   ]
+                   [figwheel "0.2.5"]]
+    :source-paths ["src-cljs/dev"]
     :plugins [
               [lein-figwheel "0.2.5"]]
     :cljsbuild
     { :builds
      { :client
-      { :compiler
+      {
+       :source-paths ["src-cljs/dev"]
+       :compiler
        {
         :optimizations :none
-        :main "oxford-web-app.devel"
+        :main "oxford-web-app.boot"
         :source-map true}}}}
     :figwheel
     {
@@ -60,14 +62,16 @@
      :ring-handler oxford-web-app.handler/app
      :open-file-command "emacs"}}
    :production
-   { :env
-    { :production true }
+   {
+    :env { :production true }
     :cljsbuild
     { :builds
      { :client
-      { :compiler
+      {
+       :source-paths ["src-cljs/prod"]
+       :compiler
        {
-        :main "oxford-web-app.production"
+        :main "oxford-web-app.boot"
         :optimizations :advanced
         :pretty-print false}}}
      }}}

@@ -1,9 +1,10 @@
-(ns oxford-web-app.devel
+(ns oxford-web-app.boot
   (:require
    [figwheel.client :as fw]
    [oxford-web-app.core :as core]))
 
 (enable-console-print!)
+(println "initlizing developemnt env")
 
 (fw/start
  {

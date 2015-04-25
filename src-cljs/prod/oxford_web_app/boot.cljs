@@ -1,4 +1,4 @@
-(ns oxford-web-app.production
+(ns oxford-web-app.boot
   (:require
    [oxford-web-app.core :as core]
   ))
