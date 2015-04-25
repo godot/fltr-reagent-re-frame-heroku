@@ -1,3 +1,7 @@
+span.word:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
 span.word {
-  border: solid 1px #aaa;
+
 }

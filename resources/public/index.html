@@ -14,6 +14,13 @@
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
             <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js" type="text/javascript"></script>
 
+            <script src="js/out/goog/base.js" type="text/javascript"></script>
             <script src="js/app.js" type="text/javascript"></script>
+            <script type="text/javascript">
+                console.log('start script');
+                goog.require('oxford_web_app.core');
+            </script>
+            <script> oxford_web_app.core.start(); </script>
+
         </body>
 </html>

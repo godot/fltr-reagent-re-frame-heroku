@@ -37,13 +37,14 @@
 (defn normalize [text] (str/replace text "’" "'"))
 (defn tokenize [text] (-> text normalize nlp-tokenize))
 
-(defstruct word :orig :stemm :oxford?)
+(defstruct word :orig :oxford?)
 
 (defn analyze [text]
-  (map #(struct word % (stemmers.core/stems (str %)) (oxford-dict-word? %))
+  ;; (map #(struct word % (stemmers.core/stems (str %)) (oxford-dict-word? %)) ;
+  (map #(struct word % (oxford-dict-word? %))
        (filter not-empty (tokenize text))))
 
-(defn html-mark-word [word, oxford] (if oxford (str "<span class='word'><mark>" word "</mark></span>") (str "<span class='word'>" word "</span>")))
+(defn html-mark-word [word oxford] (if oxford (str "<span class='word'><mark>" word "</mark></span>") (str "<span class='word'>" word "</span>")))
 
 (defn mark-non-oxford-word [word] (if (or (re-find #"[;\"\d?!,.\(\)\[\]]" word) (oxford-dict-word? word)) (html-mark-word word false) (html-mark-word word true)))
 

@@ -17,7 +17,7 @@
   {
    :text text
    :dict utils/word-list
-   :stemm (utils/analyze text)
+   :analyzed (utils/analyze text)
    :highlighted (utils/highligh text)
    })
 
@@ -36,7 +36,7 @@
   (GET "/api/dictionary/:word" [word] (json-response (or (get utils/dictionary word) {:result "missing"} )))
   (POST "/api/check" request (let [
                                    source-text (get-in request [:body :body])
-                                   analyzed-response (select-keys (analyze-text source-text) [:text :highlighted])]
+                                   analyzed-response (select-keys (analyze-text source-text) [:text :highlighted :analyzed])]
                           (json-response analyzed-response)))
 
   (route/resources "/")

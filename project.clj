@@ -16,9 +16,10 @@
                  [stemmers "0.2.2"]
                  [clojure-opennlp "0.3.3"]
                  [reagent "0.5.0"]
+                 [re-frame "0.3.2"]
                  [reagent-forms "0.5.0"]
                  [cheshire "5.4.0"]
-                 ;; [cljs-ajax "0.3.11"]
+                 [cljs-ajax "0.3.11"]
                  [environ "0.5.0"]]
   :min-lein-version "2.0.0"
   :plugins [
