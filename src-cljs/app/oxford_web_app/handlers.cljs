@@ -23,7 +23,6 @@
  (fn
    [db [_ id]]
    (let [txt (:text (get-in db [:my-articles id]))]
-     (println "posting: " txt)
      (POST "/api/check"
         {:params {:body txt}
          :handler #(dispatch [:article-analyzed id %1])
