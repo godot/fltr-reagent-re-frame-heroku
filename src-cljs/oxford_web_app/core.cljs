@@ -1,128 +1,54 @@
 (ns oxford-web-app.core
-  (:require-macros [reagent.ratom :refer [reaction]])
   (:require [clojure.string :as string]
             [figwheel.client :as fw]
             [reagent.core :as reagent :refer [atom]]
             [reagent-forms.core :refer [bind-fields]]
-            [oxford-web-app.articles.core :as articles]
-            [re-frame.core :refer [register-handler
-                                   path
-                                   register-sub
-                                   dispatch
+            [oxford-web-app.handlers]
+            [oxford-web-app.subs]
+            [oxford-web-app.views :as bs]
+            [re-frame.core :refer [dispatch
                                    dispatch-sync
                                    subscribe]]
-            [ajax.core :refer [GET POST]]
             ))
 
 
-;; html elements
-
-(defn bs-row [label input]
-  [:div.row.form-group
-   [:div.col-md-2 [:label label]]
-   [:div.col-md-5 input]])
-
-(defn bs-panel [title text footer]
-  [:div.panel.panel-default
-   [:div.panel-heading
-    [:strong title]]
-   [:div.panel-body text]
-   [:div.panel-footer footer]])
-
 (enable-console-print!)
 
-;;re-frame stuff
-
-(def initial-state
-  {
-   :my-articles articles/all
-   :my-dictionary  [] })
-
-;; handlers
-(register-handler
- :initialize
- (fn
-   [db _]
-   (merge db initial-state)))
-
-(register-handler
- :analyze-article
- (fn
-   [db [_ id]]
-   (let [txt (get-in db [:my-articles id])]
-     (POST "/api/check"
-        {:params {:body (:text txt)}
-         :handler #(dispatch [:article-analyzed id %1])
-         :error-handler error-handler
-         :format :json
-         :response-format :json
-         :keywords? true})
-     (assoc db :loading? true)
-     )))
-
-(register-handler
- :article-analyzed
- (fn
-   [db [_ id response]]
-   (update-in db [:my-articles id] merge (select-keys  response [:highlighted]))
-   ))
-
-(register-handler
- :save-article
- (fn
-   [db [_ article]]
-   (let
-       [articles (:my-articles db)
-        next-id (count articles)
-        article (assoc article :id next-id :key next-id)
-        ]
-     (when (not-empty (:text article))
-       (assoc-in db [:my-articles next-id] article)))))
-
-;;subscribers
-(register-sub
- :my-articles
- (fn
-   [db]
-   (reaction (vals (:my-articles @db)))))
-
-
-;; other
 (defn article-list
   []
-  (let [all-articles (subscribe [:my-articles])]
+  (let [articles (subscribe [:my-articles])]
     (fn []
       [:div
-       (for [article @all-articles] ^{:key (:id article)} [article-box article])])))
+       (for [article @articles] ^{:key (:id article)} [article-box article])])))
 
-(defn article-box []
+
+(defn article-box [article]
+  [:div.row
+   [:hr]
+   [:div.col-md-8
+    [article-box-panel article]]])
+
+(defn article-box-panel []
   (let [display-mode (reagent/atom :text)]
     (fn [{:keys [id title url] :as article}]
-      [:div.row
-       [:hr]
-       [:div.col-md-8
-        [bs-panel
-         [:span (str id ". " title)
-          [:div.button-group.pull-right
-;;           (if (empty? (:highlighted article)))
-           [:button.btn.btn-xs.btn-success {:on-click #(dispatch [:analyze-article id])} "analyze"]
-           (if (not-empty (:highlighted article))
-             [:button.btn.btn-xs.btn-primary {:on-click #(reset! display-mode :highlighted)} "oxford-3000"])
-           [:button.btn.btn-xs.btn-primary {:on-click #(reset! display-mode :text)} "original"]
-           ]
-          ] ;;title
-         [:div.body [:pre {:dangerouslySetInnerHTML {:__html (@display-mode article)}}]]
+      [bs/panel
+       [:span title
+        [:div.button-group.pull-right
+         [bs/small-button {:on-click #(dispatch [:analyze-text id])} "analyze"]
+         (if (not-empty (:highlighted article))
+           [bs/small-button {:on-click #(reset! display-mode :highlighted)} "oxford-3000"])
+         [bs/small-button {:on-click #(reset! display-mode :text)} "original"]
+         ]
+        ]
+       [:pre [bs/unsafe-html (@display-mode article)]]
 
-         url]]
-
-       ]))
-    )
+       url])))
 
 (def form-template
   [:div
-   (bs-row "text" [:textarea.form-control {:field :textarea :id :article.text}])
-   (bs-row "title" [:input.form-control {:field :text :id :article.title}])
-   (bs-row "url" [:input.form-control {:field :text :id :article.url}])])
+   (bs/form-row "text" [:textarea.form-control {:field :textarea :id :article.text}])
+   (bs/form-row "title" [:input.form-control {:field :text :id :article.title}])
+   (bs/form-row "url" [:input.form-control {:field :text :id :article.url}])])
 
 (defn form []
   (let [doc (atom {})]
@@ -130,7 +56,7 @@
       [:div.form-horizontal
        [:div.page-header [:h1 "Article Form"]]
        [bind-fields form-template doc]
-       [:button.btn.btn-primary {:on-click #(dispatch [:save-article (:article @doc)])} "save article"]
+       [:button.btn.btn-primary {:on-click #(dispatch [:save-article (:article @doc)])} "Add article"]
        ])))
 
 (defn page []
