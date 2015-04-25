@@ -50,6 +50,7 @@
       { :compiler
        {
         :optimizations :none
+        :main "oxford-web-app.devel"
         :source-map true}}}}
     :figwheel
     {
@@ -66,6 +67,7 @@
      { :client
       { :compiler
        {
+        :main "oxford-web-app.production"
         :optimizations :advanced
         :pretty-print false}}}
      }}}

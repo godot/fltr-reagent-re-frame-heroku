@@ -27,7 +27,7 @@
    :body (encode data)})
 
 (defroutes routes
-  (GET "/" [] (layout/application "Add article" (contents/article-form)) )
+  (GET "/" [] (layout/application "Oxford-Web-App" [:div "loading..."]) )
   (GET "/add" [] (layout/application "Add article" (contents/article-form)) )
   (GET "/check"  {{text :body} :params}  (layout/application "Check article" (contents/summary (analyze-text text))))
 

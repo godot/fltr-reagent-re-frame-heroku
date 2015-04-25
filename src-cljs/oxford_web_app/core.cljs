@@ -1,6 +1,5 @@
 (ns oxford-web-app.core
   (:require [clojure.string :as string]
-            [figwheel.client :as fw]
             [reagent.core :as reagent :refer [atom]]
             [reagent-forms.core :refer [bind-fields]]
             [oxford-web-app.handlers]
@@ -10,9 +9,6 @@
                                    dispatch-sync
                                    subscribe]]
             ))
-
-
-(enable-console-print!)
 
 (defn article-list
   []
@@ -66,31 +62,7 @@
    ])
 
 ;; Render the root component
-(defn start []
+(defn init!
+  []
   (dispatch-sync [:initialize])
   (reagent/render-component  [page] (.getElementById js/document "root")))
-
-
-(fw/start {
-  ;; configure a websocket url if you are using your own server
-  ;; :websocket-url "ws://localhost:3449/figwheel-ws"
-
-  ;; optional callback
-  :on-jsload (fn [] (print "reloaded"))
-
-  ;; The heads up display is enabled by default
-  ;; to disable it:
-  ;; :heads-up-display false
-
-  ;; when the compiler emits warnings figwheel
-  ;; blocks the loading of files.
-  ;; To disable this behavior:
-  ;; :load-warninged-code true
-
-  ;; if figwheel is watching more than one build
-  ;; it can be helpful to specify a build id for
-  ;; the client to focus on
-  ;; :build-id "example"
-})
-
-(start)
