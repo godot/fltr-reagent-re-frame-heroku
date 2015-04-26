@@ -1,4 +1,4 @@
-n## About
+## About
 
 https://fathomless-fjord-3701.herokuapp.com/
 - web version of [Foreign Language Text Reader](http://sourceforge.net/projects/fltr/)
