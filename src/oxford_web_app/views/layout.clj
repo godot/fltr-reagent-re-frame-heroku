@@ -8,9 +8,7 @@
           (include-css "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
           (include-css "css/style.css")
           [:body
-           [:div {:class "container" :id "root"}
-            [:h1 "oxford-web-app.views.layout" ]
-            content ]
+           [:div {:id "root"} content]
 
            (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js")
            (include-js "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")

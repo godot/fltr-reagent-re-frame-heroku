@@ -6,8 +6,11 @@
                           path
                           dispatch]]))
 
+(enable-console-print!)
+
 (def initial-state
   {
+   :system-messages []
    :my-articles articles/all
    :my-dictionary  [] })
 
@@ -21,11 +24,11 @@
 (register-handler
  :analyze-text
  (fn
-   [db [_ id]]
+   [db [_ id mode]]
    (let [txt (:text (get-in db [:my-articles id]))]
      (POST "/api/check"
         {:params {:body txt}
-         :handler #(dispatch [:article-analyzed id %1])
+         :handler #(dispatch [:article-analyzed id %1 mode])
          :error-handler error-handler
          :format :json
          :response-format :json
@@ -36,18 +39,23 @@
 (register-handler
  :article-analyzed
  (fn
-   [db [_ id response]]
+   [db [_ id response mode]]
+   (reset! mode :highlighted)
    (update-in db [:my-articles id] merge (select-keys  response [:highlighted]))
    ))
+
+(register-handler :clear-system-messages (fn [db] (assoc db :system-messages [])))
+(register-handler :article-saved (fn [db] (update-in db [:system-messages] conj "Article saved successfully")))
 
 (register-handler
  :save-article
  (fn
-   [db [_ article]]
+   [db [_ doc]]
    (let
-       [articles (:my-articles db)
-        next-id (count articles)
-        article (assoc article :id next-id :key next-id)
+       [next-id (count (:my-articles db))
+        article (assoc (:article @doc) :id next-id)
         ]
      (when (not-empty (:text article))
+       (reset! doc {})
+       (dispatch [:article-saved])
        (assoc-in db [:my-articles next-id] article)))))
