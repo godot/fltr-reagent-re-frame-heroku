@@ -1,3 +1,10 @@
+n## About
+
+https://fathomless-fjord-3701.herokuapp.com/
+- web version of [Foreign Language Text Reader](http://sourceforge.net/projects/fltr/)
+- oxford 3000 - check which words in your text are part of [Oxford3000](http://www.oxfordlearnersdictionaries.com/about/oxford3000)
+[more to come soon...]
+
 ## Running Locally
 
 ```sh
@@ -22,3 +29,11 @@ $ heroku open
 For more information about using Clojure on Heroku, see these Dev Center articles:
 
 - [Clojure on Heroku](https://devcenter.heroku.com/categories/clojure)
+
+## Roadmap
+
+- database - persistence layer
+- users accounts & authentication
+- form validations
+- articles management
+- user's dictionaries, word list [anki]
