@@ -1,7 +1,5 @@
 ## Running Locally
 
-Make sure you have Clojure installed.  Also, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
-
 ```sh
 $ git clone https://github.com/fltr-reagent-re-frame-heroku
 $ cd fltr-reagent-re-frame-heroku
