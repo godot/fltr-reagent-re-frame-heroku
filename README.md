@@ -1,23 +1,15 @@
-
-# clojure-getting-started
-
-A barebones Clojure app, which can easily be deployed to Heroku.  
-
-This application support the [Getting Started with Clojure](https://devcenter.heroku.com/articles/getting-started-with-clojure) article - check it out.
-
 ## Running Locally
 
 Make sure you have Clojure installed.  Also, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
 
 ```sh
-$ git clone https://github.com/heroku/clojure-getting-started.git
-$ cd clojure-getting-started
-$ lein repl
-user=> (require 'clojure-getting-started.web)
-user=>(def server (clojure-getting-started.web/-main))
+$ git clone https://github.com/fltr-reagent-re-frame-heroku
+$ cd fltr-reagent-re-frame-heroku
+$ lwrap lein figwheel
+$ lein cljsbuild auto
 ```
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+Your app should now be running on [http://localhost:3449/#/](http://localhost:3449/#/).
 
 ## Deploying to Heroku
 
@@ -32,4 +24,3 @@ $ heroku open
 For more information about using Clojure on Heroku, see these Dev Center articles:
 
 - [Clojure on Heroku](https://devcenter.heroku.com/categories/clojure)
-
