@@ -21,3 +21,7 @@
 (register-sub
  :system-messages
  (fn [db] (reaction (:system-messages @db))))
+
+(register-sub
+ :selected-word
+ (fn [db] (reaction (:selected-word @db))))

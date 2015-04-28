@@ -9,8 +9,7 @@
 (enable-console-print!)
 
 (def initial-state
-  {
-   :system-messages []
+  { :system-messages []
    :my-articles articles/all
    :my-dictionary  [] })
 
@@ -40,9 +39,15 @@
  :article-analyzed
  (fn
    [db [_ id response mode]]
-   (reset! mode :highlighted)
-   (update-in db [:my-articles id] merge (select-keys  response [:highlighted]))
+   (let [article (select-keys response [:analyzed])]
+     (reset! mode :highlighted)
+     (update-in db [:my-articles id] merge article))
    ))
+
+(register-handler
+ :word-selected
+ (fn [db [_ word]] (println word) (assoc db :selected-word word)))
+
 
 (register-handler :clear-system-messages (fn [db] (assoc db :system-messages [])))
 (register-handler :article-saved (fn [db] (update-in db [:system-messages] conj "Article saved successfully")))

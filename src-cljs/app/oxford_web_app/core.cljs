@@ -19,39 +19,53 @@
   (let [articles (subscribe [:my-articles])]
     (fn []
       [:div
-       (for [article @articles] ^{:key (:id article)} [article-listing-item article])])))
+       (for [article @articles] ^{:key (:id article)} [articles-listing-item article])])))
 
-
-(defn article-box
+(defn articles-listing-item
   [article]
-  [:div
-   [:hr]
-   [:div
-    [article-box-panel article]]])
+  (let
+      [ {:keys [id title url text]} article
+        article-link #(do [:a {:href (article-path {:id id})} %])]
 
-(defn article-listing-item
-  [{:keys [id title url text]}]
-  [bs/panel
-   [:span
-    title
-    [:div.button-group.pull-right
-     [:a.btn.btn-xs.btn-default {:href (article-path {:id id})} "details"]]
-    ]
-   text url])
+    [bs/panel
+     (article-link title)
+     [:p
+      (concat (take 250 text) "...")
+      (article-link "more")]
+     [:small [:a {:href url} url]]]))
 
-(defn article-box-panel []
+(def separator " ")
+
+(defn oxford-dictionary-word
+  "HTML wigdet for displaying marked word"
+  [{:keys [orig oxford?]}]
+  [:span.word {:on-click #(dispatch [:word-selected orig]) }
+   (if (not oxford?) [:mark orig] orig)]
+  )
+
+(defn stop-char? [char] (re-find #"^[:';\"\d?!,.\(\)\[\]]$" (str char)))
+
+(defn
+  display-sentence
+  [tokens]
+  (reduce #(if (stop-char? (last  %2)) (conj (pop %1) %2) (conj %1 %2)) [:span.sentence] (interpose separator (map #(oxford-dictionary-word %) tokens)))
+  )
+
+(defn article-details []
   (let [display-mode (reagent/atom :text)]
     (fn [{:keys [id title url] :as article}]
-      [bs/panel
-       [:span title
-        [:div.button-group.pull-right
-         [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(dispatch [:analyze-text id display-mode])} "oxford-3000"]
-         [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "original"]
-         ]
-        ]
-       [:pre [bs/unsafe-html (@display-mode article)]]
+      (let [tokens (:analyzed article)]
+        [:div
+         [:div
+          [:h3 title]
+          [:div.button-group
+           [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(dispatch [:analyze-text id display-mode])} "oxford-3000"]
+           [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "original"]
+           ]]
+         [:quote
+          (display-sentence tokens)]
 
-       url])))
+         url]))))
 
 (def form-template
   [:div
@@ -82,8 +96,7 @@
   [:div.container
    [nav]
    [system-messages]
-   content
-   ])
+   content])
 
 (defn articles-page []
   [page-with-navigation
@@ -91,25 +104,25 @@
     [:div [article-list]]]
    ])
 
-(defn article-form []
+(defn new-article []
   [page-with-navigation
    [:div [form]]
    ])
 
 (defn article-page
   [{:keys [id]}]
-  (let [article (subscribe [:article id])]
+  (let [selected-word (subscribe [:selected-word])
+        article (subscribe [:article id])]
     (fn []
       [page-with-navigation
        [:span
-        [:h2 "article details page"]
-        [article-box @article]]
+        [:div.col-md-8 [article-details @article]]
+        [:div.col-md-4 [:h3 @selected-word]]]
        ])))
 
 
 (defn current-page []
   [(session/get :current-page) (session/get :params)])
-
 
 ;; -------------------------
 ;; Routes
@@ -119,7 +132,7 @@
   (session/put! :current-page #'articles-page))
 
 (secretary/defroute new-article-path "/articles/new" []
-  (session/put! :current-page #'article-form))
+  (session/put! :current-page #'new-article))
 
 (secretary/defroute article-path "/articles/:id" {:as params}
   (session/put! :current-page #'article-page)

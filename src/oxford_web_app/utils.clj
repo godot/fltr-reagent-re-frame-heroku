@@ -30,6 +30,7 @@
   (let [w (str/trim (str/lower-case word))] (or
            (contains? dictionary word)
            (contains? dictionary w)
+           (re-find #"[;\"\d?!,.\(\)\[\]]" word)
            (contains? dictionary (first (stemmers.core/stems w))))))
 
 (def mandatory-words ["o'clock" "are" "be" "ugly" "test" "tests" "died" "So" "cheap" "is" "was" "o'clock" "didn't" "doesn't" "isn't" "aren't" "wasn't" "weren't" "don't" "been" "I" "cheaper" "pretty" "better" "best" "badder" "on" "On"])
