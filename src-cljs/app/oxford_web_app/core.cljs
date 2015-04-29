@@ -122,7 +122,7 @@
   [:span
    [spinner]
    (for [t tuc]
-     (for [text (:meanings t)] [:li (:text text)]))])
+     (for [text (:meanings t)] [:li [bs/unsafe-html (:text text)]]))])
 
 (defn translation-box
   []
