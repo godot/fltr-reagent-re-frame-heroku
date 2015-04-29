@@ -11,6 +11,7 @@
             [oxford-web-app.views.contents :as contents]
             [oxford-web-app.utils :as utils]
             [cheshire.core :refer :all]
+            [clj-http.client :as client]
             [environ.core :refer [env]]))
 
 (defn analyze-text [text]
@@ -26,6 +27,12 @@
    :headers {"Content-Type" "application/json"}
    :body (encode data)})
 
+(defn glosbe-translate
+  [word]
+  (let
+      [url (str "https://glosbe.com/gapi/translate?phrase=" word "&pretty=true&from=en&dest=en&format=json")]
+    (client/get url {:as :json :accept :json})))
+
 (defroutes routes
   (GET "/" [] (layout/application "Oxford-Web-App" [:div "loading..."]) )
   (GET "/add" [] (layout/application "Add article" (contents/article-form)) )
@@ -33,7 +40,7 @@
 
   ;;JSON
   (GET "/api/dictionary" [] (json-response (take 100 utils/word-list)))
-  (GET "/api/dictionary/:word" [word] (json-response (or (get utils/dictionary word) {:result "missing"} )))
+  (GET "/api/dictionary/:word" [word] (json-response (:body (glosbe-translate word))))
   (POST "/api/check" request (let [
                                    source-text (get-in request [:body :body])
                                    analyzed-response (select-keys (analyze-text source-text) [:text :highlighted :analyzed])]

@@ -25,3 +25,11 @@
 (register-sub
  :selected-word
  (fn [db] (reaction (:selected-word @db))))
+
+(register-sub
+ :translation
+ (fn [db] (reaction (:translation @db))))
+
+(register-sub
+ :loading?
+ (fn [db] (reaction (:loading? @db))))

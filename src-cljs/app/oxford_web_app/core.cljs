@@ -62,8 +62,11 @@
            [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(dispatch [:analyze-text id display-mode])} "oxford-3000"]
            [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "original"]
            ]]
-         [:quote
-          (display-sentence tokens)]
+         [:div
+          (when (= @display-mode :text)
+            (:text article))
+          (when (= @display-mode :highlighted)
+            (display-sentence tokens))]
 
          url]))))
 
@@ -91,6 +94,11 @@
        [:button.btn.btn-xs.btn-default.pull-right {:on-click #(dispatch [:clear-system-messages])} "clear"]
        [:div.alert.alert-success message]])))
 
+(defn spinner
+  []
+  (let [request-pending (subscribe [:loading?])]
+    (when @request-pending [:i {:class  "fa fa-spinner fa-spin fa-lg"}])))
+
 (defn page-with-navigation
   [content]
   [:div.container
@@ -109,15 +117,28 @@
    [:div [form]]
    ])
 
+(defn glosbe-translation
+  [tuc]
+  [:span
+   [spinner]
+   (for [t tuc]
+     (for [text (:meanings t)] [:li (:text text)]))])
+
+(defn translation-box
+  []
+  (let
+      [selected-word (subscribe [:selected-word])
+       translation (subscribe [:translation])]
+    [bs/panel @selected-word (glosbe-translation @translation)]))
+
 (defn article-page
   [{:keys [id]}]
-  (let [selected-word (subscribe [:selected-word])
-        article (subscribe [:article id])]
+  (let [article (subscribe [:article id])]
     (fn []
       [page-with-navigation
        [:span
         [:div.col-md-8 [article-details @article]]
-        [:div.col-md-4 [:h3 @selected-word]]]
+        [:div.col-md-4 [translation-box]]]
        ])))
 
 

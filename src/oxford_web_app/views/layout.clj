@@ -6,6 +6,7 @@
          [:head
           [:title title]
           (include-css "//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
+          (include-css "//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css")
           (include-css "css/style.css")
           [:body
            [:div {:id "root"} content]

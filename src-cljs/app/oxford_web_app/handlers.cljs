@@ -21,6 +21,23 @@
    (merge db initial-state)))
 
 (register-handler
+ :search-word
+ (fn
+   [db [_ word]]
+   (GET (str "/api/dictionary/" word)
+        {:handler #(dispatch [:word-translated %1])
+         :format :json
+         :response-format :json
+         :keywords? true})
+   (assoc db :loading? true)))
+
+(register-handler
+ :word-translated
+ (fn
+   [db [_ response]]
+   (assoc db :translation (:tuc response) :loading? false)))
+
+(register-handler
  :analyze-text
  (fn
    [db [_ id mode]]
@@ -39,14 +56,15 @@
  :article-analyzed
  (fn
    [db [_ id response mode]]
-   (let [article (select-keys response [:analyzed])]
+   (let [article (select-keys response [:analyzed])
+         db (assoc db :loading? false)
+         ]
      (reset! mode :highlighted)
-     (update-in db [:my-articles id] merge article))
-   ))
+     (update-in db [:my-articles id] merge article))))
 
 (register-handler
  :word-selected
- (fn [db [_ word]] (println word) (assoc db :selected-word word)))
+ (fn [db [_ word]] (println word) (dispatch [:search-word word]) (assoc db :selected-word word)))
 
 
 (register-handler :clear-system-messages (fn [db] (assoc db :system-messages [])))
