@@ -140,7 +140,7 @@
   []
   (let
       [images (subscribe [:images-found])]
-    [bs/panel (str "some images") (for [img (:results @images)] [:img {:src (:tbUrl img)}])]))
+    [bs/panel "" (for [img (:results @images)] [:img {:src (:tbUrl img)}])]))
 
 
 
