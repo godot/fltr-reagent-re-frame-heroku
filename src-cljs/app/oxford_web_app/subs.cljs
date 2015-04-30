@@ -31,5 +31,10 @@
  (fn [db] (reaction (:translation @db))))
 
 (register-sub
+ :images-found
+ (fn [db] (reaction (:images-found @db))))
+
+
+(register-sub
  :loading?
  (fn [db] (reaction (:loading? @db))))

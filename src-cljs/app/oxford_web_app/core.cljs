@@ -36,19 +36,24 @@
 
 (def separator " ")
 
+(defn word-tag
+  [word]
+  [:span.word {:on-click #(dispatch [:word-selected word])} word])
+
 (defn oxford-dictionary-word
   "HTML wigdet for displaying marked word"
-  [{:keys [orig oxford?]}]
-  [:span.word {:on-click #(dispatch [:word-selected orig]) }
-   (if (not oxford?) [:mark orig] orig)]
+  [word]
+  (let [tag [word-tag orig]
+        oxford? true]
+    (if (not oxford?) [:mark tag] tag))
   )
 
 (defn stop-char? [char] (re-find #"^[:';\"\d?!,.\(\)\[\]]$" (str char)))
 
 (defn
   display-sentence
-  [tokens]
-  (reduce #(if (stop-char? (last  %2)) (conj (pop %1) %2) (conj %1 %2)) [:span.sentence] (interpose separator (map #(oxford-dictionary-word %) tokens)))
+  [tokens mark-fn]
+  (reduce #(if (stop-char? (last  %2)) (conj (pop %1) %2) (conj %1 %2)) [:span.sentence] (interpose separator (map #(mark-fn (:orig %)) tokens)))
   )
 
 (defn article-details []
@@ -59,14 +64,14 @@
          [:div
           [:h3 title]
           [:div.button-group
-           [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(dispatch [:analyze-text id display-mode])} "oxford-3000"]
+           [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(dispatch [:analyze-text id display-mode])} "translator"]
            [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "original"]
            ]]
          [:div
           (when (= @display-mode :text)
             (:text article))
           (when (= @display-mode :highlighted)
-            (display-sentence tokens))]
+            (display-sentence tokens word-tag))]
 
          url]))))
 
@@ -122,7 +127,7 @@
   [:span
    [spinner]
    (for [t tuc]
-     (for [text (:meanings t)] [:li [bs/unsafe-html (:text text)]]))])
+     (for [text (distinct  (:meanings t))] [:li [bs/unsafe-html (:text text)]]))])
 
 (defn translation-box
   []
@@ -131,6 +136,14 @@
        translation (subscribe [:translation])]
     [bs/panel @selected-word (glosbe-translation @translation)]))
 
+(defn images-found-box
+  []
+  (let
+      [images (subscribe [:images-found])]
+    [bs/panel (str "some images") (for [img (:results @images)] [:img {:src (:tbUrl img)}])]))
+
+
+
 (defn article-page
   [{:keys [id]}]
   (let [article (subscribe [:article id])]
@@ -138,6 +151,7 @@
       [page-with-navigation
        [:span
         [:div.col-md-8 [article-details @article]]
+        [:div.col-md-4 [images-found-box]]
         [:div.col-md-4 [translation-box]]]
        ])))
 

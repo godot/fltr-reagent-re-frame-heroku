@@ -1,5 +1,6 @@
 (ns oxford-web-app.handlers
   (:require
+   [clojure.string :as string]
    [oxford-web-app.articles.core :as articles]
    [ajax.core :refer [GET POST]]
    [re-frame.core :refer [register-handler
@@ -24,17 +25,34 @@
  :search-word
  (fn
    [db [_ word]]
-   (GET (str "/api/dictionary/" word)
-        {:handler #(dispatch [:word-translated %1])
+   (GET (str "/api/dictionary/" (string/lower-case word))
+        {:handler #(dispatch [:word-translated %1 word])
          :format :json
          :response-format :json
          :keywords? true})
    (assoc db :loading? true)))
 
 (register-handler
- :word-translated
+ :search-google-images
+ (fn [db [_ word]]
+   (GET (str "/api/images/" word)
+        {:handler #(dispatch [:images-found %1])
+         :format :json
+         :response-format :json
+         :keywords? true})
+   db))
+
+(register-handler
+ :images-found
  (fn
    [db [_ response]]
+   (assoc db :images-found (:responseData response))))
+
+(register-handler
+ :word-translated
+ (fn
+   [db [_ response word]]
+   (dispatch [:search-google-images word])
    (assoc db :translation (:tuc response) :loading? false)))
 
 (register-handler
@@ -64,7 +82,7 @@
 
 (register-handler
  :word-selected
- (fn [db [_ word]] (println word) (dispatch [:search-word word]) (assoc db :selected-word word)))
+ (fn [db [_ word]] (dispatch [:search-word word]) (assoc db :selected-word word)))
 
 
 (register-handler :clear-system-messages (fn [db] (assoc db :system-messages [])))

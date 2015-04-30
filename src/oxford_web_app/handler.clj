@@ -27,6 +27,13 @@
    :headers {"Content-Type" "application/json"}
    :body (encode data)})
 
+(defn google-images-search
+  [word]
+  (let
+      [url (str "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" word)]
+    (client/get url {:as :json :accept :json})))
+
+
 (defn glosbe-translate
   [word]
   (let
@@ -41,6 +48,7 @@
   ;;JSON
   (GET "/api/dictionary" [] (json-response (take 100 utils/word-list)))
   (GET "/api/dictionary/:word" [word] (json-response (:body (glosbe-translate word))))
+  (GET "/api/images/:word" [word] (json-response (:body (google-images-search word))))
   (POST "/api/check" request (let [
                                    source-text (get-in request [:body :body])
                                    analyzed-response (select-keys (analyze-text source-text) [:text :highlighted :analyzed])]
