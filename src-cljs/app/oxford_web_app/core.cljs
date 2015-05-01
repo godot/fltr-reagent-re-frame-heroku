@@ -64,7 +64,7 @@
          [:div
           [:h3 title]
           [:div.button-group
-           [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(dispatch [:analyze-text id display-mode])} "translator"]
+           [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(reset! display-mode :highlighted)} "translator"]
            [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "original"]
            ]]
          [:div
@@ -134,14 +134,15 @@
   (let
       [selected-word (subscribe [:selected-word])
        translation (subscribe [:translation])]
-    [bs/panel @selected-word (glosbe-translation @translation)]))
+    (when (not-empty @translation)
+      [bs/panel @selected-word (glosbe-translation @translation)])))
 
 (defn images-found-box
   []
   (let
       [images (subscribe [:images-found])]
-    [bs/panel "" (for [img (:results @images)] [:img {:src (:tbUrl img)}])]))
-
+    (when (not-empty @images)
+      [bs/panel "images" (for [img (:results @images)] [:img {:src (:tbUrl img)}])])))
 
 
 (defn article-page
@@ -211,4 +212,5 @@
   []
   (hook-browser-navigation!)
   (dispatch-sync [:initialize])
+  (dispatch-sync [:load-documents])
   (reagent/render-component  [current-page] (.getElementById js/document "root")))

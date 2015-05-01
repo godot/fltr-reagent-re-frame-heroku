@@ -23,6 +23,7 @@
                  [cheshire "5.4.0"]
                  [cljs-ajax "0.3.11"]
                  [clj-http "1.1.1"]
+                 [clojurewerkz/elastisch "2.1.0"]
                  [environ "0.5.0"]]
   :min-lein-version "2.0.0"
   :plugins [

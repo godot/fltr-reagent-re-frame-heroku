@@ -11,15 +11,31 @@
 
 (def initial-state
   { :system-messages []
-   :my-articles articles/all
+   :my-articles []
    :my-dictionary  [] })
-
 
 (register-handler
  :initialize
  (fn
    [db _]
    (merge db initial-state)))
+
+(register-handler
+ :load-documents
+ (fn [db _]
+   (GET "/api/documents"
+        {:handler #(dispatch [:documents-loaded %1])
+         :format :json
+         :response-format :json
+         :keywords? true})
+   db
+   ))
+
+(register-handler
+ :documents-loaded
+ (fn [db [_ docs]]
+   (update-in db [:my-articles] concat docs)))
+
 
 (register-handler
  :search-word
@@ -56,47 +72,39 @@
    (assoc db :translation (:tuc response) :loading? false)))
 
 (register-handler
- :analyze-text
- (fn
-   [db [_ id mode]]
-   (let [txt (:text (get-in db [:my-articles id]))]
-     (POST "/api/check"
-        {:params {:body txt}
-         :handler #(dispatch [:article-analyzed id %1 mode])
-         :error-handler error-handler
-         :format :json
-         :response-format :json
-         :keywords? true})
-     (assoc db :loading? true)
-     )))
-
-(register-handler
- :article-analyzed
- (fn
-   [db [_ id response mode]]
-   (let [article (select-keys response [:analyzed])
-         db (assoc db :loading? false)
-         ]
-     (reset! mode :highlighted)
-     (update-in db [:my-articles id] merge article))))
-
-(register-handler
  :word-selected
  (fn [db [_ word]] (dispatch [:search-word word]) (assoc db :selected-word word)))
 
 
 (register-handler :clear-system-messages (fn [db] (assoc db :system-messages [])))
-(register-handler :article-saved (fn [db] (update-in db [:system-messages] conj "Article saved successfully")))
+
+(register-handler
+ :article-saved
+ (fn
+   [db [_ response]]
+   (println response)
+   (update-in db [:system-messages] conj "Article saved successfully")))
 
 (register-handler
  :save-article
  (fn
    [db [_ doc]]
    (let
-       [next-id (count (:my-articles db))
-        article (assoc (:article @doc) :id next-id)
-        ]
+       [ article (assoc (:article @doc)) ]
      (when (not-empty (:text article))
        (reset! doc {})
-       (dispatch [:article-saved])
-       (assoc-in db [:my-articles next-id] article)))))
+       (save-article article #(dispatch [:article-saved %1]))
+
+       db))))
+
+
+(defn save-article [article success]
+  (POST "/api/documents"
+        {:params {:body article}
+         :handler success
+         :error-handler failure
+         :format :json
+         :response-format :json
+         :keywords? true}))
+
+(defn failure [response] (println response))

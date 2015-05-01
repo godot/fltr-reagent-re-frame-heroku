@@ -2,12 +2,11 @@
   (:require [clojure.string :as string]))
 
 
-(def all {
-          0 {:id 0 :highlighted "" :url "http://qz.com/386126/the-body-language-secrets-of-successful-people/" :title "Exaggerated gestures" :text "Can imply that you’re stretching the trut palms of your hands—to communicate that you have nothing to hide."}
-          1 { :id 1 :highlighted "" :url "some" :title  "Watching the clock" :text "While talking to someone is a clear sign of disrespect, impatience, and inflated ego. It sends the mess leave
+(def all [{:id 0 :highlighted "" :url "http://qz.com/386126/the-body-language-secrets-of-successful-people/" :title "Exaggerated gestures" :text "Can imply that you’re stretching the trut palms of your hands—to communicate that you have nothing to hide."}
+          { :id 1 :highlighted "" :url "some" :title  "Watching the clock" :text "While talking to someone is a clear sign of disrespect, impatience, and inflated ego. It sends the mess leave
  them." }
-          2 {:id 2 :highlighted "" :url "http://qz.com/386126/the-body-language-secrets-of-successful-people/" :title "Our bodies have a language of their" :text "Our bodies part of who you are, to the point where you might not even think about it."}
-          3 {:id 3 :title "why clojurescript" :text "While not a complete answer, I can point out some attractive qualities of ClojureScript
+          {:id 2 :highlighted "" :url "http://qz.com/386126/the-body-language-secrets-of-successful-people/" :title "Our bodies have a language of their" :text "Our bodies part of who you are, to the point where you might not even think about it."}
+          {:id 3 :title "why clojurescript" :text "While not a complete answer, I can point out some attractive qualities of ClojureScript
 
 Clojure as a data format
 ClojureScript allows for the client-server exchange data format to be Clojure.  This offers huge advantages over JSON, including simple things like sets or more advanced things like forms.  Using the recent addition of reader literals, the data format becomes open for extension, allowing the engineer to tailor the data format to solve any problem.
@@ -25,4 +24,4 @@ Mobile Development with HTML5
 With ClojureScript, Clojure becomes a first-class language for mobile development.  A growing trend is to build mobile apps with HTML5/CSS3/JS - enhancing the apps portability and maintainability.  Now imagine ClojureScript/HTML5/CSS3 with the benefits of protocols, the reader, macros, etc and all the libraries available to JavaScript including Google Closure and jQuery.  Suddenly a whole new set of possibilities becomes available to the developer.
 
 Clojure in Clojure
-Without going into too much detail, ClojureScript provides a map for what Clojure in Clojure might look like.  Searching around can provide you with more information why this would be desirable."}})
+Without going into too much detail, ClojureScript provides a map for what Clojure in Clojure might look like.  Searching around can provide you with more information why this would be desirable."}])

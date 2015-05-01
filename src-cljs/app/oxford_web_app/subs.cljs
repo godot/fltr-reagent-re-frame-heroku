@@ -9,14 +9,13 @@
    [db [_ id]]
    (let
        [articles-reaction (reaction (:my-articles @db))]
-     (reaction (get @articles-reaction (js/parseInt id))))))
+     (reaction (first (filter #(= (str (:id %)) id) @articles-reaction))))))
 
 (register-sub
  :my-articles
  (fn
    [db]
-   (reaction (vals (:my-articles @db)))))
-
+   (reaction (:my-articles @db))))
 
 (register-sub
  :system-messages
