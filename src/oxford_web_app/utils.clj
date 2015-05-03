@@ -47,8 +47,3 @@
 (defn html-mark-word [word oxford] (if oxford (str "<span class='word'><mark>" word "</mark></span>") (str "<span class='word'>" word "</span>")))
 
 (defn mark-non-oxford-word [word] (if (or (re-find #"[;\"\d?!,.\(\)\[\]]" word) (oxford-dict-word? word)) (html-mark-word word false) (html-mark-word word true)))
-
-(def sentence (str  "fist line" "\n" "it makes it hard for engineers to progress beyond the feature-level stage, because meatier projects just aren’t done in most organizations when it’s seen as tenable for non-coding architects and managers to pull down off-the-shelf solutions and expect the engineers to “make the thingy work with the other thingy."))
-(highligh sentence)
-
-(tokenize sentence)
