@@ -5,7 +5,7 @@
 (defn google-images-search
   [word]
   (let
-      [url (str "https://ajax.googleapis.com/ajax/services/search/images?rsz=6&v=1.0&q=" word)]
+      [url (str "https://ajax.googleapis.com/ajax/services/search/images?hl=en&as_rights=cc_publicdomain&rsz=3&v=1.0&q=" word)]
     (http/get url {:as :json :accept :json})))
 
 

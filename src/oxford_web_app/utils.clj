@@ -18,7 +18,6 @@
 (defstruct word-struct :url :word :type)
 
 (def word-list (map #(apply struct word-struct (str/split % #";")) (str/split s #"\n")))
-
 (def dictionary (apply hash-map (mapcat #(conj [] (:word %) %) word-list)))
 
 (defn in?
@@ -36,12 +35,12 @@
 (def mandatory-words ["o'clock" "are" "be" "ugly" "test" "tests" "died" "So" "cheap" "is" "was" "o'clock" "didn't" "doesn't" "isn't" "aren't" "wasn't" "weren't" "don't" "been" "I" "cheaper" "pretty" "better" "best" "badder" "on" "On"])
 
 (defn normalize [text] (str/replace text "’" "'"))
-(defn tokenize [text] (-> text normalize nlp-tokenize))
+(defn mark-new-lines [text] (str/replace text "\n" "\n\r"))
+(defn tokenize [text] (-> text mark-new-lines normalize nlp-tokenize))
 
 (defstruct word :orig :oxford?)
 
 (defn analyze [text]
-  ;; (map #(struct word % (stemmers.core/stems (str %)) (oxford-dict-word? %)) ;
   (map #(struct word % (oxford-dict-word? %))
        (filter not-empty (tokenize text))))
 
@@ -49,17 +48,7 @@
 
 (defn mark-non-oxford-word [word] (if (or (re-find #"[;\"\d?!,.\(\)\[\]]" word) (oxford-dict-word? word)) (html-mark-word word false) (html-mark-word word true)))
 
-(defn highligh [text]
-  (nlp-detokenize (map mark-non-oxford-word (tokenize text))))
-
-(analyze "lorem ipsum ide die died")
-
-;; ;; defaults to porter stemmer
-(stemmers.core/stems "what died for stemming dying")
-
-(or (not-empty (remove oxford-dict-word? mandatory-words)) "Works just fine!")
-
-(def sentence "Dot. This is test of some hyper oswald functionalities! Don't mess with me and don't mess with them. There aren't funny!")
-
-(def sentence "it makes it hard for engineers to progress beyond the feature-level stage, because meatier projects just aren’t done in most organizations when it’s seen as tenable for non-coding architects and managers to pull down off-the-shelf solutions and expect the engineers to “make the thingy work with the other thingy.")
+(def sentence (str  "fist line" "\n" "it makes it hard for engineers to progress beyond the feature-level stage, because meatier projects just aren’t done in most organizations when it’s seen as tenable for non-coding architects and managers to pull down off-the-shelf solutions and expect the engineers to “make the thingy work with the other thingy."))
 (highligh sentence)
+
+(tokenize sentence)

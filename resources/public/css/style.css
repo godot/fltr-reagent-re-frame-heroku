@@ -3,5 +3,22 @@ span.word:hover {
     text-decoration: underline;
 }
 span.word {
+    font-size: 1.5 em;
+}
+
+pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    word-break: break-word;
+    background-color: white;
+}
+
+img.image {
+    margin: 4px auto;
+    width: 100%;
+    border: solid 1px #eee;
 
 }

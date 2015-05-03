@@ -45,35 +45,33 @@
   [word]
   (let [tag [word-tag orig]
         oxford? true]
-    (if (not oxford?) [:mark tag] tag))
-  )
+    (if (not oxford?) [:mark tag] tag)))
 
-(defn stop-char? [char] (re-find #"^[:';\"\d?!,.\(\)\[\]]$" (str char)))
-
-(defn
-  display-sentence
-  [tokens mark-fn]
-  (reduce #(if (stop-char? (last  %2)) (conj (pop %1) %2) (conj %1 %2)) [:span.sentence] (interpose separator (map #(mark-fn (:orig %)) tokens)))
-  )
+(defn display-sentence
+ [text]
+ (let [tokens (string/split (str text) #"([a-zA-Z'-]*)")]
+   (for [word tokens] (if (re-find #"\w" word) [word-tag word] word)))
+ )
 
 (defn article-details []
   (let [display-mode (reagent/atom :text)]
     (fn [{:keys [id title url] :as article}]
-      (let [tokens (:analyzed article)]
-        [:div
-         [:div
-          [:h3 title]
-          [:div.button-group
-           [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(reset! display-mode :highlighted)} "translator"]
-           [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "original"]
-           ]]
-         [:div
-          (when (= @display-mode :text)
-            (:text article))
-          (when (= @display-mode :highlighted)
-            (display-sentence tokens word-tag))]
+      [:div
+       [:div
+        [:h3 title]
+        [:div.button-group
+         [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(reset! display-mode :highlighted)} "off"]
+         [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "on"]
+         ]]
+       [:pre
+        (when (= @display-mode :text)
+          [:span
+           (display-sentence (:text article))]
+          )
+        (when (= @display-mode :highlighted)
+          (:text article))]
 
-         url]))))
+       url])))
 
 (def form-template
   [:div
@@ -127,7 +125,7 @@
   [:span
    [spinner]
    (for [t tuc]
-     (for [text (distinct  (:meanings t))] [:li [bs/unsafe-html (:text text)]]))])
+     (for [text (distinct  (:meanings t))] [:li (display-sentence (:text text))]))])
 
 (defn translation-box
   []
@@ -135,15 +133,13 @@
       [selected-word (subscribe [:selected-word])
        translation (subscribe [:translation])]
     (when (not-empty @translation)
-      [bs/panel @selected-word (glosbe-translation @translation)])))
+      [bs/panel [:h3 @selected-word] (glosbe-translation @translation)])))
 
 (defn images-found-box
   []
-  (let
-      [images (subscribe [:images-found])]
+  (let [images (subscribe [:images-found])]
     (when (not-empty @images)
-      [bs/panel "images" (for [img (:results @images)] [:img {:src (:tbUrl img)}])])))
-
+      [bs/panel "images" (for [img (:results @images)] [:div [:img.image.img-responsive {:src (:tbUrl img)}]])])))
 
 (defn article-page
   [{:keys [id]}]
@@ -151,11 +147,11 @@
     (fn []
       [page-with-navigation
        [:span
-        [:div.col-md-8 [article-details @article]]
-        [:div.col-md-4 [images-found-box]]
-        [:div.col-md-4 [translation-box]]]
-       ])))
-
+        [:div.col-md-8
+         [article-details @article]]
+        [:div.col-md-4
+         [images-found-box]
+         [translation-box]]]])))
 
 (defn current-page []
   [(session/get :current-page) (session/get :params)])
@@ -182,8 +178,8 @@
 (secretary/defroute "*" []
   (redirect-to "/articles"))
 
-;; -------------------------
 
+;; -------------------------
 (defn nav
   []
   [:nav.navbar.navbar-default
@@ -195,7 +191,6 @@
      [:li
       [:a {:href (articles-path)} "articles"]]]]])
 
-
 ;; History
 ;; must be called after routes have been defined
 (defn hook-browser-navigation! []
@@ -205,8 +200,8 @@
      (fn [event]
        (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
-;; -------------------------
 
+;; -------------------------
 ;; Render the root component
 (defn init!
   []
