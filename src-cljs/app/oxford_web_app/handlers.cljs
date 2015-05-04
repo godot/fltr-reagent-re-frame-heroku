@@ -35,8 +35,23 @@
          :format :json
          :response-format :json
          :keywords? true})
-   db
-   ))
+   db ))
+
+(register-handler
+ :load-document
+ (fn [db [_ document-id]]
+   (GET (str "/api/documents/" document-id)
+        {:handler #(dispatch [:document-loaded %1])
+         :format :json
+         :response-format :json
+         :keywords? true})
+   db ))
+
+(register-handler
+ :document-loaded
+ (fn [db [_ document]]
+   (update-in db [:my-articles] conj document)))
+
 
 (register-handler
  :documents-loaded
@@ -94,7 +109,7 @@
  :article-saved
  (fn
    [db [_ response]]
-   (println response)
+   (dispatch [:load-document (:_id response)])
    (update-in db [:system-messages] conj "Article saved successfully")))
 
 (register-handler
@@ -110,10 +125,10 @@
        db))))
 
 
-(defn save-article [article success]
+(defn save-article [article success-handler]
   (POST "/api/documents"
         {:params {:body article}
-         :handler success
+         :handler success-handler
          :error-handler failure
          :format :json
          :response-format :json
