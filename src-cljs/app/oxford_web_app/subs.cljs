@@ -35,5 +35,5 @@
 
 
 (register-sub
- :loading?
- (fn [db] (reaction (:loading? @db))))
+ :spinner
+ (fn [db [_ type]] (reaction (get-in @db [:spinners type]))))

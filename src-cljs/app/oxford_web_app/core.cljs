@@ -26,32 +26,30 @@
   (let
       [ {:keys [id title url text]} article
         article-link #(do [:a {:href (article-path {:id id})} %])]
-
-    [bs/panel
-     (article-link title)
+    [:article
+     [:h2 (article-link title)]
      [:p
-      (concat (take 250 text) "...")
-      (article-link "more")]
-     [:small [:a {:href url} url]]]))
+      (take 250 text)
+      (article-link "...")
+      [:p [:small [:a {:href url} url]]]]]))
 
 (def separator " ")
 
 (defn word-tag
-  [word]
-  [:span.word {:on-click #(dispatch [:word-selected word])} word])
-
-(defn oxford-dictionary-word
-  "HTML wigdet for displaying marked word"
-  [word]
-  (let [tag [word-tag orig]
-        oxford? true]
-    (if (not oxford?) [:mark tag] tag)))
+  []
+  (let [selected (reagent/atom false)]
+    (fn [word]
+      [:span.word
+       {:class (when @selected "active")
+        :on-click #(do (println @selected) (swap! selected not) (dispatch [:word-selected word]))} word])))
 
 (defn display-sentence
- [text]
- (let [tokens (string/split (str text) #"([a-zA-Z'-]*)")]
-   (for [word tokens] (if (re-find #"\w" word) [word-tag word] word)))
- )
+  []
+  (fn [text]
+    (let [tokens (string/split (str text) #"([a-zA-Z'-]*)")]
+      [:span
+       (println "----------->" text)
+       (for [word tokens] (if (re-find #"\w" word) [word-tag word] word))])))
 
 (defn article-details []
   (let [display-mode (reagent/atom :text)]
@@ -66,7 +64,7 @@
        [:pre
         (when (= @display-mode :text)
           [:span
-           (display-sentence (:text article))]
+           [display-sentence (:text article)]]
           )
         (when (= @display-mode :highlighted)
           (:text article))]
@@ -98,8 +96,8 @@
        [:div.alert.alert-success message]])))
 
 (defn spinner
-  []
-  (let [request-pending (subscribe [:loading?])]
+  [type]
+  (let [request-pending (subscribe [:spinner type])]
     (when @request-pending [:i {:class  "fa fa-spinner fa-spin fa-lg"}])))
 
 (defn page-with-navigation
@@ -122,10 +120,12 @@
 
 (defn glosbe-translation
   [tuc]
-  [:span
-   [spinner]
-   (for [t tuc]
-     (for [text (distinct  (:meanings t))] [:li (display-sentence (:text text))]))])
+  (let [translation (distinct (map #(:text %) (mapcat #(:meanings %) tuc)))]
+    [:span
+     [spinner :translation]
+     [:ul
+      (for [row translation] [:li [display-sentence row]])]
+     ]))
 
 (defn translation-box
   []
@@ -139,7 +139,10 @@
   []
   (let [images (subscribe [:images-found])]
     (when (not-empty @images)
-      [bs/panel "images" (for [img (:results @images)] [:div [:img.image.img-responsive {:src (:tbUrl img)}]])])))
+      [bs/panel "images"
+       [:span
+        [spinner :images]
+        (for [img (:results @images)] [:div [:img.image.img-responsive {:src (:tbUrl img)}]])]])))
 
 (defn article-page
   [{:keys [id]}]
@@ -150,8 +153,9 @@
         [:div.col-md-8
          [article-details @article]]
         [:div.col-md-4
+         [translation-box]
          [images-found-box]
-         [translation-box]]]])))
+         ]]])))
 
 (defn current-page []
   [(session/get :current-page) (session/get :params)])

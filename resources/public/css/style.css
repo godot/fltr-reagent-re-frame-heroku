@@ -1,9 +1,16 @@
 span.word:hover {
     cursor: pointer;
     text-decoration: underline;
+    color: #033;
 }
-span.word {
-    font-size: 1.5 em;
+pre span.word {
+    font-size: 1.3em;
+    font-family: Helvetica;
+}
+span.word.active {
+    font-weight: 600;
+    color: #002;
+    background-color: #ffd;
 }
 
 pre {
@@ -18,7 +25,12 @@ pre {
 
 img.image {
     margin: 4px auto;
-    width: 100%;
+    width: 80%;
     border: solid 1px #eee;
+}
 
+article {
+    margin-bottom: 30px;
+    border-left: solid 5px #eee;
+    padding-left: 10px;
 }

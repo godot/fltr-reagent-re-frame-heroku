@@ -12,7 +12,13 @@
 (def initial-state
   { :system-messages []
    :my-articles []
+   :spinners {}
    :my-dictionary  [] })
+
+(defn show-spinner [db type] (println (:spinners db)) (assoc-in db [:spinners type] true))
+(register-handler
+ :hide-spinner
+ (fn [db [_ type]] (println (:spinners db)) (assoc-in db [:spinners type] false)))
 
 (register-handler
  :initialize
@@ -46,7 +52,7 @@
          :format :json
          :response-format :json
          :keywords? true})
-   (assoc db :loading? true)))
+   (show-spinner db :translation)))
 
 (register-handler
  :search-google-images
@@ -56,12 +62,13 @@
          :format :json
          :response-format :json
          :keywords? true})
-   db))
+   (show-spinner db :images)))
 
 (register-handler
  :images-found
  (fn
    [db [_ response]]
+   (dispatch [:hide-spinner :images])
    (assoc db :images-found (:responseData response))))
 
 (register-handler
@@ -69,7 +76,8 @@
  (fn
    [db [_ response word]]
    (dispatch [:search-google-images word])
-   (assoc db :translation (:tuc response) :loading? false)))
+   (dispatch [:hide-spinner :translation])
+   (assoc db :translation (:tuc response))))
 
 (register-handler
  :word-selected
