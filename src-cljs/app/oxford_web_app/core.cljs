@@ -44,12 +44,11 @@
        {:class (when selected "active")
         :on-click #(dispatch [:word-selected word])} word])))
 
-(defn display-sentence
+(defn translateable-text
   []
   (fn [text]
     (let [tokens (string/split (str text) #"([a-zA-Z'-]*)")]
       [:span
-       (println "----------->" text)
        (for [word tokens] (if (re-find #"\w" word) [word-tag word] word))])))
 
 (defn article-details []
@@ -65,7 +64,7 @@
        [:pre
         (when (= @display-mode :text)
           [:span
-           [display-sentence (:text article)]]
+           [translateable-text (:text article)]]
           )
         (when (= @display-mode :highlighted)
           (:text article))]
@@ -99,7 +98,9 @@
 (defn spinner
   [type]
   (let [request-pending (subscribe [:spinner type])]
-    (when @request-pending [:i {:class  "fa fa-spinner fa-spin fa-lg"}])))
+    (when @request-pending
+      [:div.spinner-wrapper
+       [:i {:class  "fa fa-spinner fa-spin fa-lg"}]])))
 
 (defn page-with-navigation
   [content]
@@ -126,16 +127,20 @@
       [:span
        [spinner :translation]
        [:ul
-        (for [row translation] [:li [display-sentence row]])]
+        (for [row translation] [:li [translateable-text row]])]
        ])))
 
 (defn translation-box
   []
-  (let [selected-word (subscribe [:selected-word])
+  (let [word-history (subscribe [:selection-history])
         translation (subscribe [:translation])]
     (fn []
       (when (not-empty @translation)
-        [bs/panel [:h3 @selected-word] [glosbe-translation @translation]]))))
+        [bs/panel
+         [:h4 [translateable-text  (first @word-history)]]
+         [glosbe-translation @translation]
+         [translateable-text (string/join " / " (rest (distinct @word-history)))]
+         ]))))
 
 (defn images-found-box
   []
@@ -154,7 +159,7 @@
        [:span
         [:div.col-md-8
          [article-details @article]]
-        [:div.col-md-4
+        [:div.col-md-4.sidebar
          [translation-box]
          [images-found-box]
          ]]])))
@@ -190,7 +195,7 @@
   []
   [:nav.navbar.navbar-default
    [:div.container-fluid
-    [:div.nabar-header [:a.navbar-brand "Foreign Language Text Reader ver. 0.0.1"]]
+    [:div.nabar-header [:a.navbar-brand "Foreign Language Text Reader ver. " "0.1.1"]]
     [:ul.nav.navbar-nav
      [:li
       [:a {:href (new-article-path)} "new article"]]

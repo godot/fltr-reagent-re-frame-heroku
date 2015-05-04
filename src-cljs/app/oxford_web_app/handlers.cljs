@@ -1,4 +1,4 @@
-(ns oxford-web-app.handlers
+,(ns oxford-web-app.handlers
   (:require
    [clojure.string :as string]
    [oxford-web-app.articles.core :as articles]
@@ -12,7 +12,8 @@
 (def initial-state
   { :system-messages []
    :my-articles []
-   :spinners {}
+   :spinners {:translation2 true}
+   :selection-history '()
    :my-dictionary  [] })
 
 (defn show-spinner [db type] (println (:spinners db)) (assoc-in db [:spinners type] true))
@@ -45,14 +46,14 @@
 
 (register-handler
  :search-word
- (fn
-   [db [_ word]]
+ (fn [db [_ word]]
    (GET (str "/api/dictionary/" (string/lower-case word))
-        {:handler #(dispatch [:word-translated %1 word])
+        {:handler #(dispatch [:word-translated-successfully %1 word])
          :format :json
          :response-format :json
          :keywords? true})
-   (show-spinner db :translation)))
+   (let [db (show-spinner db :translation)]
+     (assoc db :translation "..." ))))
 
 (register-handler
  :search-google-images
@@ -72,17 +73,18 @@
    (assoc db :images-found (:responseData response))))
 
 (register-handler
- :word-translated
+ :word-translated-successfully
  (fn
    [db [_ response word]]
-   (dispatch [:search-google-images word])
    (dispatch [:hide-spinner :translation])
    (assoc db :translation (:tuc response))))
 
 (register-handler
  :word-selected
- (fn [db [_ word]] (dispatch [:search-word word]) (assoc db :selected-word word)))
-
+ (fn [db [_ word sth]]
+   (dispatch [:search-word word])
+   (dispatch [:search-google-images word])
+   (update-in db [:selection-history] conj word)))
 
 (register-handler :clear-system-messages (fn [db] (assoc db :system-messages [])))
 

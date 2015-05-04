@@ -32,8 +32,6 @@
            (re-find #"[;\"\d?!,.\(\)\[\]]" word)
            (contains? dictionary (first (stemmers.core/stems w))))))
 
-(def mandatory-words ["o'clock" "are" "be" "ugly" "test" "tests" "died" "So" "cheap" "is" "was" "o'clock" "didn't" "doesn't" "isn't" "aren't" "wasn't" "weren't" "don't" "been" "I" "cheaper" "pretty" "better" "best" "badder" "on" "On"])
-
 (defn normalize [text] (str/replace text "’" "'"))
 (defn mark-new-lines [text] (str/replace text "\n" "\n\r"))
 (defn tokenize [text] (-> text mark-new-lines normalize nlp-tokenize))

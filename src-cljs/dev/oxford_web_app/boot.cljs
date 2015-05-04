@@ -21,12 +21,12 @@
   ;; when the compiler emits warnings figwheel
   ;; blocks the loading of files.
   ;; To disable this behavior:
-  ;; :load-warninged-code true
+  :load-warninged-code true
 
   ;; if figwheel is watching more than one build
   ;; it can be helpful to specify a build id for
   ;; the client to focus on
-  ;; :build-id "example"
+  :build-id "dev"
   })
 
 (core/init!)

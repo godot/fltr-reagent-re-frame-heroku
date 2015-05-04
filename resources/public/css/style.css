@@ -6,11 +6,18 @@ span.word:hover {
 pre span.word {
     font-size: 1.3em;
     font-family: Helvetica;
+    user-select: none; /* CSS3 (little to no support) */
+    -ms-user-select: none; /* IE 10+ */
+    -moz-user-select: none; /* Gecko (Firefox) */
+    -webkit-user-select: none; /* Webkit (Safari, Chrome) */
 }
 span.word.active {
-    font-weight: 600;
     color: #002;
     background-color: #ffd;
+}
+
+ul {
+    padding: 0 0 0 20px;
 }
 
 pre {
@@ -33,4 +40,17 @@ article {
     margin-bottom: 30px;
     border-left: solid 5px #eee;
     padding-left: 10px;
+}
+
+.sidebar .panel-body {
+    height: 300px;
+    overflow: overlay;
+    overflow-x: scroll;
+}
+
+.spinner-wrapper {
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+
 }

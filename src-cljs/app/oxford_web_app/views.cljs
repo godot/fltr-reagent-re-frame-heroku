@@ -8,7 +8,7 @@
 (defn panel [title body footer]
   [:div.panel.panel-default
    [:div.panel-heading
-    [:strong title]]
+    [:span title]]
    [:div.panel-body body]
    [:div.panel-footer footer]])
 

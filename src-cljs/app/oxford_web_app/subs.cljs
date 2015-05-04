@@ -21,9 +21,13 @@
  :system-messages
  (fn [db] (reaction (:system-messages @db))))
 
+(register-sub :selection-history (fn [db] (reaction (:selection-history @db))))
+
 (register-sub
  :selected-word
- (fn [db] (reaction (:selected-word @db))))
+ (fn [db]
+   (let [history (reaction (:selection-history @db))]
+     (reaction (first @history)))))
 
 (register-sub
  :translation
