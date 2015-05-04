@@ -37,11 +37,12 @@
 
 (defn word-tag
   []
-  (let [selected (reagent/atom false)]
-    (fn [word]
+  (fn [word]
+    (let [selected-word (subscribe [:selected-word])
+          selected (= @selected-word word)]
       [:span.word
-       {:class (when @selected "active")
-        :on-click #(do (println @selected) (swap! selected not) (dispatch [:word-selected word]))} word])))
+       {:class (when selected "active")
+        :on-click #(dispatch [:word-selected word])} word])))
 
 (defn display-sentence
   []
@@ -119,21 +120,22 @@
    ])
 
 (defn glosbe-translation
-  [tuc]
-  (let [translation (distinct (map #(:text %) (mapcat #(:meanings %) tuc)))]
-    [:span
-     [spinner :translation]
-     [:ul
-      (for [row translation] [:li [display-sentence row]])]
-     ]))
+  []
+  (fn [tuc]
+    (let [translation (distinct (map #(:text %) (mapcat #(:meanings %) tuc)))]
+      [:span
+       [spinner :translation]
+       [:ul
+        (for [row translation] [:li [display-sentence row]])]
+       ])))
 
 (defn translation-box
   []
-  (let
-      [selected-word (subscribe [:selected-word])
-       translation (subscribe [:translation])]
-    (when (not-empty @translation)
-      [bs/panel [:h3 @selected-word] (glosbe-translation @translation)])))
+  (let [selected-word (subscribe [:selected-word])
+        translation (subscribe [:translation])]
+    (fn []
+      (when (not-empty @translation)
+        [bs/panel [:h3 @selected-word] [glosbe-translation @translation]]))))
 
 (defn images-found-box
   []
