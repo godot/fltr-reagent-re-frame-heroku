@@ -73,14 +73,14 @@
 
 (def form-template
   [:div
-   (bs/form-row "text" [:textarea.form-control {:field :textarea :id :article.text}])
-   (bs/form-row "title" [:input.form-control {:field :text :id :article.title}])
-   (bs/form-row "url" [:input.form-control {:field :text :id :article.url}])])
+   (bs/form-row "Title" [:input.form-control {:field :text :id :article.title}])
+   (bs/form-row "Text" [:textarea.form-control {:field :textarea :id :article.text :rows 20}])
+   (bs/form-row "Url" [:input.form-control {:field :text :id :article.url}])])
 
 (defn form []
   (let [doc (atom {})]
     (fn []
-      [:div.form-horizontal
+      [:div.form
        [:div.page-header [:h1 "Article Form"]]
        [bind-fields form-template doc]
        [:button.btn.btn-primary {:on-click #(dispatch [:save-article doc])} "Add article"]

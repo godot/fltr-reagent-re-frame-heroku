@@ -63,7 +63,9 @@
          :format :json
          :response-format :json
          :keywords? true})
-   (show-spinner db :images)))
+   (let [db (show-spinner db :images)]
+     (assoc db :images-found "..." )
+     )))
 
 (register-handler
  :images-found

@@ -3,7 +3,7 @@
 (defn form-row [label input]
   [:div.row.form-group
    [:div.col-md-2 [:label label]]
-   [:div.col-md-5 input]])
+   [:div.col-md-10 input]])
 
 (defn panel [title body footer]
   [:div.panel.panel-default
