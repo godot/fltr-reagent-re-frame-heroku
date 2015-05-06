@@ -30,6 +30,10 @@
      (reaction (first @history)))))
 
 (register-sub
+ :append-mode
+ (fn [db] (reaction (:append-mode @db))))
+
+(register-sub
  :translation
  (fn [db] (reaction (:translation @db))))
 

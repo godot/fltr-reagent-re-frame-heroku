@@ -4,6 +4,7 @@ span.word:hover {
     color: #033;
 }
 pre span.word {
+    border: solid 1px #faa;
     font-size: 1.3em;
     font-family: Helvetica;
     user-select: none; /* CSS3 (little to no support) */

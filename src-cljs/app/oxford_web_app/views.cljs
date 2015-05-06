@@ -1,9 +1,13 @@
 (ns oxford-web-app.views)
 
-(defn form-row [label input]
-  [:div.row.form-group
-   [:div.col-md-2 [:label label]]
-   [:div.col-md-10 input]])
+(defn form-row
+  ([input]
+   [:div.row.form-group
+    [:div.col-md-12 input]])
+  ([label input]
+   [:div.row.form-group
+    [:div.col-md-2 [:label label]]
+    [:div.col-md-10 input]]))
 
 (defn panel [title body footer]
   [:div.panel.panel-default

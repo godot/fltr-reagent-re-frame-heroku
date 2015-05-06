@@ -5,6 +5,7 @@
             [reagent-forms.core :refer [bind-fields]]
             [oxford-web-app.handlers]
             [oxford-web-app.subs]
+            [oxford-web-app.my-words :as my-words]
             [oxford-web-app.views :as bs]
             [secretary.core :as secretary :refer-macros [defroute]]
             [goog.events :as events]
@@ -40,16 +41,19 @@
   (fn [word]
     (let [selected-word (subscribe [:selected-word])
           selected (= @selected-word word)]
-      [:span.word
-       {:class (when selected "active")
-        :on-click #(dispatch [:word-selected word])} word])))
+      ^{:key (.random js/Math)}
+      (if-not (re-find #"\w" word) [:span word]
+          [:span.word
+           {:class (when selected "active")
+            :on-click #(dispatch [:word-selected (if (.-shiftKey %1) [@selected-word word] [word])])
+            } word]))))
 
 (defn translateable-text
   []
-  (fn [text]
-    (let [tokens (string/split (str text) #"([a-zA-Z'-]*)")]
-      [:span
-       (for [word tokens] (if (re-find #"\w" word) [word-tag word] word))])))
+    (fn [text]
+      (let [tokens (string/split (str text) #"([a-zA-Z'-]*)")]
+        [:span
+         (for [word tokens] ^{:key (str word "-" (.random js/Math))} [word-tag word])])))
 
 (defn article-details []
   (let [display-mode (reagent/atom :text)]
@@ -60,8 +64,14 @@
         [:div.button-group
          [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(reset! display-mode :highlighted)} "off"]
          [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "on"]
+         [bs/small-button {:class (when (= :editor @display-mode) "active") :on-click #(reset! display-mode :editor)} "edit"]
+         (when (= :editor @display-mode)
+           [bs/small-button {:class (when (= :editor @display-mode) "active") :on-click #(reset! display-mode :editor)} "save"])
          ]]
        [:pre
+        (when (= @display-mode :editor)
+          [:textarea.form-control {:rows 37} (:text article)]
+          )
         (when (= @display-mode :text)
           [:span
            [translateable-text (:text article)]]
@@ -83,8 +93,7 @@
       [:div.form
        [:div.page-header [:h1 "Article Form"]]
        [bind-fields form-template doc]
-       [:button.btn.btn-primary {:on-click #(dispatch [:save-article doc])} "Add article"]
-       ])))
+       [:button.btn.btn-primary {:on-click #(dispatch [:save-article doc])} "Add article"]])))
 
 (defn system-messages
   []
@@ -127,7 +136,7 @@
       [:span
        [spinner :translation]
        [:ul
-        (for [row translation] [:li [translateable-text row]])]
+        (for [row translation] ^{:key (.random js/Math)} [:li [translateable-text row]])]
        ])))
 
 (defn translation-box
@@ -135,7 +144,7 @@
   (let [word-history (subscribe [:selection-history])
         translation (subscribe [:translation])]
     (fn []
-      (when (not-empty @translation)
+      (when (not-empty @word-history)
         [bs/panel
          [:h4 [translateable-text  (first @word-history)]]
          [glosbe-translation @translation]
@@ -160,6 +169,7 @@
         [:div.col-md-8
          [article-details @article]]
         [:div.col-md-4.sidebar
+         [my-words/translate-box]
          [translation-box]
          [images-found-box]
          ]]])))

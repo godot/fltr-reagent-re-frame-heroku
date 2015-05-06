@@ -16,10 +16,10 @@
    :selection-history '()
    :my-dictionary  [] })
 
-(defn show-spinner [db type] (println (:spinners db)) (assoc-in db [:spinners type] true))
+(defn show-spinner [db type] (assoc-in db [:spinners type] true))
 (register-handler
  :hide-spinner
- (fn [db [_ type]] (println (:spinners db)) (assoc-in db [:spinners type] false)))
+ (fn [db [_ type]] (assoc-in db [:spinners type] false)))
 
 (register-handler
  :initialize
@@ -98,12 +98,14 @@
 
 (register-handler
  :word-selected
- (fn [db [_ word sth]]
-   (dispatch [:search-word word])
-   (dispatch [:search-google-images word])
-   (update-in db [:selection-history] conj word)))
+ (fn [db [_ words sth]]
+   (let [word (string/join " " words)]
+     (dispatch [:search-word word])
+;;     (dispatch [:search-google-images word])
+     (update-in db [:selection-history] conj word))))
 
 (register-handler :clear-system-messages (fn [db] (assoc db :system-messages [])))
+(register-handler :toggle-append-mode (fn [db] (update db :append-mode not)))
 
 (register-handler
  :article-saved
