@@ -41,8 +41,6 @@
     )
   )
 
-(play-sound "Testing")
-
 (register-handler
  :stop-reading
  (fn [db]
