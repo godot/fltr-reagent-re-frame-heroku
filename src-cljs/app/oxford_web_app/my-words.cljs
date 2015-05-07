@@ -37,14 +37,14 @@
 (defn play-sound
   [src]
   (let [msg  (js/SpeechSynthesisUtterance. src)]
-    (.speak (.-speechSynthesis js/window) msg)
+    (.speak (aget js/window "speechSynthesis") msg)
     )
   )
 
 (register-handler
  :stop-reading
  (fn [db]
-   (.cancel (.-speechSynthesis js/window))
+   (.cancel (aget js/window "speechSynthesis"))
    db))
 
 (register-handler
