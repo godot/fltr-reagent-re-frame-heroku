@@ -1,5 +1,7 @@
 (ns oxford-web-app.my-words
-  (:require [oxford-web-app.subs]
+  (:require [clojure.string :as string]
+            [oxford-web-app.subs]
+            [ajax.core :refer [GET POST]]
             [oxford-web-app.views :as bs]
             [reagent.core :as reagent :refer [atom]]
             [reagent-forms.core :refer [bind-fields]]
@@ -30,3 +32,27 @@
         [bs/form-row [:button.btn.btn-default {:on-click #(dispatch [:save-translation doc])} "save"]]]
        (str @doc)]
       )))
+
+
+(defn play-sound
+  [src]
+  (let [msg  (js/SpeechSynthesisUtterance. src)]
+    (.speak (.-speechSynthesis js/window) msg)
+    )
+  )
+
+(play-sound "Testing")
+
+(register-handler
+ :stop-reading
+ (fn [db]
+   (.cancel (.-speechSynthesis js/window))
+   db))
+
+(register-handler
+ :text-to-speech
+ (fn
+   [db [_ text]]
+   (play-sound text)
+   db)
+ )

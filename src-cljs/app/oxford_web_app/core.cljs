@@ -64,6 +64,8 @@
         [:div.button-group
          [bs/small-button {:class (when (= :highlighted @display-mode) "active") :on-click #(reset! display-mode :highlighted)} "off"]
          [bs/small-button {:class (when (= :text @display-mode) "active") :on-click #(reset! display-mode :text)} "on"]
+         [bs/small-button {:on-click #(dispatch [:text-to-speech (:text article)])} "listen"]
+         [bs/small-button {:on-click #(dispatch [:stop-reading])} "stop-reading"]
          [bs/small-button {:class (when (= :editor @display-mode) "active") :on-click #(reset! display-mode :editor)} "edit"]
          (when (= :editor @display-mode)
            [bs/small-button {:class (when (= :editor @display-mode) "active") :on-click #(reset! display-mode :editor)} "save"])
@@ -146,7 +148,10 @@
     (fn []
       (when (not-empty @word-history)
         [bs/panel
-         [:h4 [translateable-text  (first @word-history)]]
+         [:h4
+          [translateable-text  (first @word-history)]
+          [:button.btn.btn-xs.btn-default.pull-right {:on-click #(dispatch [:text-to-speech (str (first @word-history))])} "listen"]
+          ]
          [glosbe-translation @translation]
          [translateable-text (string/join " / " (rest (distinct @word-history)))]
          ]))))
